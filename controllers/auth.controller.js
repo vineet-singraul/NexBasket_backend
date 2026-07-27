@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
       httpOnly: true,
       maxAge: 60 * 1000,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     const safeUser = user.toObject();
@@ -136,7 +136,7 @@ const signIn = async (req, res) => {
       httpOnly: true,
       maxAge:  7 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     const safeUser = user.toObject();
@@ -155,7 +155,7 @@ const signOut = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.status(200).json({ message: "Sign out successful" });
