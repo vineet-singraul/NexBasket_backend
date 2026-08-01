@@ -39,9 +39,7 @@ const getSingleOwnerCategory = async (req, res) => {
         message: "Owner ID is required",
       });
     }
-
     const categories = await Category.find({ OwnerId: id });
-
     res.status(200).json({
       success: true,
       data: categories,

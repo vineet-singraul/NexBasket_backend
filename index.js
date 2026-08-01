@@ -44,6 +44,6 @@ app.use("/api/store", storeRoutes)
 app.use("/api/productRoutes", productRoutes)
 
 app.listen(PORT, () => {
-  connectDB();
+  connectDB().catch((err) => console.error("MongoDB connection error:", err.message));
   console.log(`Server is running on port ${PORT}`);
 });
