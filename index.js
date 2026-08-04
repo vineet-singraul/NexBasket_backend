@@ -10,6 +10,7 @@ const authRoutes = require("./routes/auth.routes.js");
 const catagoryRoutes = require("./routes/category.routes.js");
 const storeRoutes = require("./routes/store.routes.js");
 const productRoutes = require("./routes/product.routes.js");
+const productImageRoutes = require("./routes/productImage.routes.js");
 
 const PORT = process.env.PORT || 8000;
 
@@ -42,6 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/category", catagoryRoutes)
 app.use("/api/store", storeRoutes)
 app.use("/api/productRoutes", productRoutes)
+app.use("/api/productImageRoutes",productImageRoutes)
 
 app.listen(PORT, () => {
   connectDB().catch((err) => console.error("MongoDB connection error:", err.message));

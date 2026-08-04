@@ -16,4 +16,9 @@ const uploadBufferToCloudinary = (fileBuffer, folder = "stores") => {
   });
 };
 
-module.exports = { uploadBufferToCloudinary };
+// Deletes an already-uploaded Cloudinary asset using its public_id.
+const deleteFromCloudinary = (publicId) => {
+  return cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+};
+
+module.exports = { uploadBufferToCloudinary, deleteFromCloudinary };
