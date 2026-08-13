@@ -1,7 +1,7 @@
-const storeModel = require("../models/store.model.js");
-const { uploadBufferToCloudinary } = require("../utils/cloudinary.util.js");
-const { sentOtpEmailInCreateStoreTime } = require("../utils/mailer.util.js");
-const { generatePassword } = require("../utils/authOtp.util.js");
+const storeModel = require("../../models/store_model/store.model.js");
+const { uploadBufferToCloudinary } = require("../../utils/cloudinary.util.js");
+const { sentOtpEmailInCreateStoreTime } = require("../../utils/mailer.util.js");
+const { generatePassword } = require("../../utils/authOtp.util.js");
 
 
 const AddStore = async (req, res) => {

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {addProductImages, getProductImageById, deleteProductById} = require("../controllers/productImage.controller.js");
+const {addProductImages, getProductImageById, deleteProductById} = require("../controllers/Product/productImage.controller.js");
 
 const upload = require("../middlewares/upload.middleware.js");
 

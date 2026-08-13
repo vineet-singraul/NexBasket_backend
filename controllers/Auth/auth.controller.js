@@ -1,11 +1,11 @@
-const User = require("../models/user.model.js");
+const User = require("../../models/auth_model/user.model.js");
 const {
   hashPassword,
   comparePassword,
   generateToken,
-} = require("../utils/auth.util.js");
-const { generateOtp } = require("../utils/authOtp.util.js");
-const { sendOtpEmail } = require("../utils/mailer.util.js");
+} = require("../../utils/auth.util.js");
+const { generateOtp } = require("../../utils/authOtp.util.js");
+const { sendOtpEmail } = require("../../utils/mailer.util.js");
 
 const signUp = async (req, res) => {
   try {

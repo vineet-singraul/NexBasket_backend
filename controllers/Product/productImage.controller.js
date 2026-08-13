@@ -1,9 +1,9 @@
-const productModel = require("../models/product.model.js");
-const productImageModel = require("../models/productImage.model.js");
+const productModel = require("../../models/product_model/product.model.js");
+const productImageModel = require("../../models/product_model/productImage.model.js");
 const {
   uploadBufferToCloudinary,
   deleteFromCloudinary,
-} = require("../utils/cloudinary.util.js");
+} = require("../../utils/cloudinary.util.js");
 
 const addProductImages = async (req, res) => {
   try {

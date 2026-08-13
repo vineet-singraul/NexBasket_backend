@@ -1,4 +1,4 @@
-const { AddStore,showOnlyOwnerStore, deleteOwnerStore,EditOwnerDetails,getSingleOwner } = require("../controllers/store.controller.js");
+const { AddStore,showOnlyOwnerStore, deleteOwnerStore,EditOwnerDetails,getSingleOwner } = require("../controllers/Store/store.controller.js");
 const express = require("express");
 const router = express.Router();
 const { isOwner } = require("../middlewares/IsOwnerAuth.js");
