@@ -9,6 +9,7 @@ const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/auth.routes.js");
 const storeRoutes = require("./routes/store.routes.js");
 const createElectranicsBaseProductRoutes = require("./routes/electranicsProduct.routes.js");
+const productRoutes = require("./routes/product.routes.js");
 const category = require("./routes/category.routes.js");
 
 const PORT = process.env.PORT || 8000;
@@ -41,6 +42,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/store", storeRoutes)
 app.use("/api/createElectranicsBaseProductRoutes", createElectranicsBaseProductRoutes)
+app.use("/api/product", productRoutes);
 app.use("/api/category", category);
 
 app.listen(PORT, () => {

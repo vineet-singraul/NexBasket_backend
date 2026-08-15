@@ -15,11 +15,11 @@ const productInventorySchema = new mongoose.Schema(
       index: true,
     },
 
-    warehouseId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Warehouse",
-      index: true,
-    },
+    // warehouseId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Warehouse",
+    //   index: true,
+    // },
 
     quantity: {
       type: Number,
@@ -57,7 +57,7 @@ const productInventorySchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, 
   }
 );
 

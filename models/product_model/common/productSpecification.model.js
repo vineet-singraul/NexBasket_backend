@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const electronicsSpecificationSchema = new mongoose.Schema(
+const productSpecificationSchema = new mongoose.Schema(
   {
     productId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -42,12 +42,12 @@ const electronicsSpecificationSchema = new mongoose.Schema(
   }
 );
 
-electronicsSpecificationSchema.index({
+productSpecificationSchema.index({
   productId: 1,
   variantId: 1,
 });
 
 module.exports = mongoose.model(
-  "ElectronicsSpecification",
-  electronicsSpecificationSchema
+  "ProductSpecification",
+  productSpecificationSchema
 );

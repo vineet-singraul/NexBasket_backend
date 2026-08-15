@@ -1,4 +1,4 @@
-const categoryModel = require("../../../models/product_model/A_Category_of_product/category.model.js");
+const categoryModel = require("../../../models/product_model/category/category.model.js");
 
 // Create Category
 const createCategoryOfProduct = async (req, res) => {
@@ -46,7 +46,7 @@ const createCategoryOfProduct = async (req, res) => {
 };
 
 
-// Get All Categories   
+// Get All Categories
 const getAllCategoriesOfProduct = async (req, res) => {
   try {
     const categories = await categoryModel
