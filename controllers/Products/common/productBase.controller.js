@@ -195,6 +195,7 @@ const addProductImages = async (req, res) => {
   }
 };
 
+
 // Get Product Images
 const getProductImages = async (req, res) => {
   const { productId } = req.params;

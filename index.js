@@ -8,7 +8,7 @@ const app = express();
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/auth.routes.js");
 const storeRoutes = require("./routes/store.routes.js");
-const createElectranicsBaseProductRoutes = require("./routes/electranicsProduct.routes.js");
+const electronicsRoutes = require("./routes/electranicsProduct.routes.js");
 const productRoutes = require("./routes/product.routes.js");
 const category = require("./routes/category.routes.js");
 
@@ -41,7 +41,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/store", storeRoutes)
-app.use("/api/createElectranicsBaseProductRoutes", createElectranicsBaseProductRoutes)
+app.use("/api/electronics", electronicsRoutes)
 app.use("/api/product", productRoutes);
 app.use("/api/category", category);
 
