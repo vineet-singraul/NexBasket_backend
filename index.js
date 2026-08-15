@@ -7,11 +7,9 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/auth.routes.js");
-const catagoryRoutes = require("./routes/category.routes.js");
 const storeRoutes = require("./routes/store.routes.js");
-const productRoutes = require("./routes/product.routes.js");
-const productImageRoutes = require("./routes/productImage.routes.js");
-const cardsRoutes = require("./routes/userRoutes/cards.routes.js");
+const createElectranicsBaseProductRoutes = require("./routes/electranicsProduct.routes.js");
+const category = require("./routes/category.routes.js");
 
 const PORT = process.env.PORT || 8000;
 
@@ -41,11 +39,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/category", catagoryRoutes)
 app.use("/api/store", storeRoutes)
-app.use("/api/productRoutes", productRoutes)
-app.use("/api/productImageRoutes",productImageRoutes)
-app.use("/api/cardsRoutes", cardsRoutes)
+app.use("/api/createElectranicsBaseProductRoutes", createElectranicsBaseProductRoutes)
+app.use("/api/category", category);
 
 app.listen(PORT, () => {
   connectDB().catch((err) => console.error("MongoDB connection error:", err.message));

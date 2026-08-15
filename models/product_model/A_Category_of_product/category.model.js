@@ -2,27 +2,34 @@ const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema(
   {
-    OwnerId: {
+    name: {
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
-    MainOwnerName: {
+
+    slug: {
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
+      unique: true,
     },
-    productCategory: {
+
+    description: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
-    categoryDescription: {
+
+    image: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
-    categoryActive: {
+
+    isActive: {
       type: Boolean,
       default: true,
     },

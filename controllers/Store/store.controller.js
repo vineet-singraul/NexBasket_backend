@@ -274,5 +274,5 @@ module.exports = {
   showOnlyOwnerStore,
   deleteOwnerStore,
   EditOwnerDetails,
-  getSingleOwner
+  getSingleOwner   
 };

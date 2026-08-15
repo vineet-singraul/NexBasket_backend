@@ -1,12 +1,10 @@
 const express = require("express");
 
-const {addCategory,getSingleOwnerCategory} = require("../controllers/Product/category.controller.js");
-const {isOwner} = require("../middlewares/IsOwnerAuth.js")
-const {protect} = require("../middlewares/auth.middleware.js");
+const categoryModel = require("../models/product_model/A_Category_of_product/category.model.js");
+const {createCategoryOfProduct} = require("../controllers/Products/category/category.controller.js")
+
 const router = express.Router();
 
-router.post("/addCategory",protect,isOwner,addCategory);
-router.get("/getSingleOwnerCategory/:id",protect,isOwner,getSingleOwnerCategory)
-
+router.post("/createCategoryOfProduct", createCategoryOfProduct);
 
 module.exports = router;
