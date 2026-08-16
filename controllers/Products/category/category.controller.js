@@ -3,7 +3,7 @@ const categoryModel = require("../../../models/product_model/category/category.m
 // Create Category
 const createCategoryOfProduct = async (req, res) => {
   try {
-    const { name, slug, description, image, isActive } = req.body;
+    const {ownerId, name, slug, description, image, isActive } = req.body;
 
     if (!name || !slug) {
       return res.status(400).json({
@@ -24,6 +24,7 @@ const createCategoryOfProduct = async (req, res) => {
     }
 
     const category = await categoryModel.create({
+      ownerId,
       name,
       slug,
       description,
@@ -40,6 +41,38 @@ const createCategoryOfProduct = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to create category.",
+      error: error.message,
+    });
+  }
+};
+
+
+// Get Categories For A Single Owner
+const getSingleOwnerCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Owner ID is required.",
+      });
+    }
+
+    const categories = await categoryModel
+      .find({ ownerId: id })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully.",
+      count: categories.length,
+      data: categories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch categories.",
       error: error.message,
     });
   }
@@ -169,6 +202,7 @@ const deleteCategoryOfProduct = async (req, res) => {
 
 module.exports = {
   createCategoryOfProduct,
+  getSingleOwnerCategory,
   getAllCategoriesOfProduct,
   getCategoryOfProductById,
   updateCategoryOfProduct,
