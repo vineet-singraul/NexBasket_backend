@@ -1,9 +1,21 @@
 const nodemailer = require("nodemailer");
+const nodemailerShared = require("nodemailer/lib/shared");
 
+// Render reports an IPv6 network interface that isn't actually internet-routable.
+// Nodemailer resolves both A and AAAA records for smtp.gmail.com and picks one at
+// random, so it intermittently tries the unreachable IPv6 address and fails with
+// ENETUNREACH. Hiding IPv6 interfaces from nodemailer's own interface check makes
+// it treat IPv6 as unsupported and resolve/connect over IPv4 only.
+const ifaces = nodemailerShared.networkInterfaces || {};
+nodemailerShared.networkInterfaces = Object.fromEntries(
+    Object.entries(ifaces).map(([name, addrs]) => [
+        name,
+        (addrs || []).filter((a) => a.family !== "IPv6" && a.family !== 6),
+    ])
+);
 
 const transporter = nodemailer.createTransport({
     service:"gmail",
-    family: 4,
     auth:{
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
