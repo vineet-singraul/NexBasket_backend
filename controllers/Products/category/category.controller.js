@@ -75,6 +75,7 @@ const getSingleOwnerCategory = async (req, res) => {
       message: "Failed to fetch categories.",
       error: error.message,
     });
+    
   }
 };
 
