@@ -1,19 +1,22 @@
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
-// Render blocks outbound SMTP traffic on its network, so raw SMTP (nodemailer +
-// Gmail) can never connect from a Render-hosted server. Resend sends over a
-// plain HTTPS API call instead, which isn't blocked.
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "NexBasket <onboarding@resend.dev>";
+
+const transporter = nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    }
+});
+
 
 const sendOtpEmail = async (toEmail, otp) => {
-  const { error } = await resend.emails.send({
-    from: FROM_EMAIL,
+  await transporter.sendMail({
+    from: `"My App" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: "Verify your email - OTP",
     html: `<h2>Your OTP is: ${otp}</h2><p>This OTP will expire in 5 minutes.</p>`,
   });
-  if (error) throw new Error(error.message || "Failed to send OTP email");
 };
 
 
@@ -46,8 +49,8 @@ const sentOtpEmailInCreateStoreTime = async ({
     </tr>`
     : "";
 
-  const { error } = await resend.emails.send({
-    from: FROM_EMAIL,
+  await transporter.sendMail({
+    from: `"NexBasket" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: "🎉 Your NexBasket Store Has Been Created Successfully",
     html: `
@@ -175,7 +178,6 @@ const sentOtpEmailInCreateStoreTime = async ({
 </html>
 `,
   });
-  if (error) throw new Error(error.message || "Failed to send store-created email");
 };
 
 
