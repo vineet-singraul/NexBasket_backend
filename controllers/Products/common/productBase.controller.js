@@ -26,19 +26,53 @@ const parseIfJSON = (value, fallback) => {
 // Create Base Product — base details + SKU/variant details + pricing + inventory + specifications, all in one call
 const createBaseProduct = async (req, res) => {
   const {
+    // Identity
     storeId,
     title,
     slug,
+    productCode,
+    productType,
+    categoryId,
+    subcategoryId,
+
+    // Content
     description,
     shortDescription,
+    highlights,
+    features,
+    whatsIncluded,
+
+    // Brand
     brand,
     manufacturer,
     modelName,
     modelNumber,
-    categoryId,
+    manufacturerPartNumber,
+    importerName,
+    packerName,
     countryOfOrigin,
+
+    // Compliance
+    hsnCode,
+    taxCode,
+
+    // Warranty
+    warranty,
+
+    // SEO
+    metaTitle,
+    metaDescription,
+    searchKeywords,
     tags,
+
+    // Return
+    returnPolicy,
+    returnDays,
+
+    // Status
+    condition,
     status,
+    visibility,
     isFeatured,
     isActive,
 
@@ -72,19 +106,53 @@ const createBaseProduct = async (req, res) => {
 
   try {
     const baseProduct = await BaseProductModel.create({
+      // Identity
       storeId,
       title,
       slug,
+      productCode,
+      productType,
+      categoryId,
+      subcategoryId,
+
+      // Content
       description,
       shortDescription,
+      highlights: parseIfJSON(highlights, []),
+      features: parseIfJSON(features, []),
+      whatsIncluded: parseIfJSON(whatsIncluded, []),
+
+      // Brand
       brand,
       manufacturer,
       modelName,
       modelNumber,
-      categoryId,
+      manufacturerPartNumber,
+      importerName,
+      packerName,
       countryOfOrigin,
+
+      // Compliance
+      hsnCode,
+      taxCode,
+
+      // Warranty
+      warranty: parseIfJSON(warranty, {}),
+
+      // SEO
+      metaTitle,
+      metaDescription,
+      searchKeywords: parseIfJSON(searchKeywords, []),
       tags: parseIfJSON(tags, []),
+
+      // Return
+      returnPolicy,
+      returnDays,
+
+      // Status
+      condition,
       status,
+      visibility,
       isFeatured: toBoolean(isFeatured),
       isActive: toBoolean(isActive),
 

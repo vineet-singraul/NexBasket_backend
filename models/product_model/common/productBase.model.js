@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const productBaseSchema = new mongoose.Schema(
   {
-    // ---------- Base Details ----------
+    // ---------- Identity ----------
     storeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
@@ -24,6 +24,28 @@ const productBaseSchema = new mongoose.Schema(
       index: true,
     },
 
+    productCode: {
+      type: String,
+      trim: true,
+      unique: true,
+      sparse: true,
+      index: true,
+    },
+
+    productType: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+      index: true,
+    },
+
+    // ---------- Content ----------
     description: {
       type: String,
       trim: true,
@@ -34,6 +56,28 @@ const productBaseSchema = new mongoose.Schema(
       trim: true,
     },
 
+    highlights: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    features: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    whatsIncluded: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    // ---------- Brand ----------
     brand: {
       type: String,
       trim: true,
@@ -55,17 +99,78 @@ const productBaseSchema = new mongoose.Schema(
       trim: true,
     },
 
-    categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
-      index: true,
+    manufacturerPartNumber: {
+      type: String,
+      trim: true,
+    },
+
+    importerName: {
+      type: String,
+      trim: true,
+    },
+
+    packerName: {
+      type: String,
+      trim: true,
     },
 
     countryOfOrigin: {
       type: String,
       trim: true,
     },
+
+    // ---------- Compliance ----------
+    hsnCode: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    taxCode: {
+      type: String,
+      trim: true,
+    },
+
+    // ---------- Warranty ----------
+    warranty: {
+      duration: {
+        type: Number,
+        min: 0,
+      },
+
+      unit: {
+        type: String,
+        enum: ["days", "months", "years"],
+      },
+
+      type: {
+        type: String,
+        enum: ["manufacturer", "seller", "brand", "no_warranty"],
+      },
+
+      description: {
+        type: String,
+        trim: true,
+      },
+    },
+
+    // ---------- SEO ----------
+    metaTitle: {
+      type: String,
+      trim: true,
+    },
+
+    metaDescription: {
+      type: String,
+      trim: true,
+    },
+
+    searchKeywords: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
 
     tags: [
       {
@@ -74,10 +179,36 @@ const productBaseSchema = new mongoose.Schema(
       },
     ],
 
+    // ---------- Return ----------
+    returnPolicy: {
+      type: String,
+      trim: true,
+    },
+
+    returnDays: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    // ---------- Status ----------
+    condition: {
+      type: String,
+      enum: ["new", "used", "refurbished"],
+      default: "new",
+    },
+
     status: {
       type: String,
       enum: ["draft", "active", "inactive", "blocked", "archived"],
       default: "draft",
+      index: true,
+    },
+
+    visibility: {
+      type: String,
+      enum: ["public", "private", "hidden"],
+      default: "public",
       index: true,
     },
 
