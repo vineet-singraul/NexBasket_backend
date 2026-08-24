@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const productBaseSchema = new mongoose.Schema(
   {
+    // ---------- Base Details ----------
     storeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
@@ -61,12 +62,6 @@ const productBaseSchema = new mongoose.Schema(
       index: true,
     },
 
-    // productTypeId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "ProductType",
-    //   index: true,
-    // },
-
     countryOfOrigin: {
       type: String,
       trim: true,
@@ -96,10 +91,176 @@ const productBaseSchema = new mongoose.Schema(
       default: true,
       index: true,
     },
+
+    // ---------- SKU / Variant Details ----------
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      index: true,
+    },
+
+    variantName: {
+      type: String,
+      trim: true,
+    },
+
+    attributes: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+
+    gtin: {
+      type: String,
+      trim: true,
+    },
+
+    weight: {
+      value: {
+        type: Number,
+        min: 0,
+      },
+
+      unit: {
+        type: String,
+        enum: ["mg", "g", "kg", "oz", "lb"],
+        default: "g",
+      },
+    },
+
+    dimensions: {
+      length: {
+        type: Number,
+        min: 0,
+      },
+
+      width: {
+        type: Number,
+        min: 0,
+      },
+
+      height: {
+        type: Number,
+        min: 0,
+      },
+
+      unit: {
+        type: String,
+        enum: ["mm", "cm", "m", "in", "ft"],
+        default: "cm",
+      },
+    },
+
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
+
+    // ---------- Pricing Details ----------
+    pricing: {
+      mrp: {
+        type: Number,
+        min: 0,
+      },
+
+      sellingPrice: {
+        type: Number,
+        min: 0,
+      },
+
+      discountPercent: {
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0,
+      },
+
+      costPrice: {
+        type: Number,
+        min: 0,
+      },
+
+      taxPercent: {
+        type: Number,
+        min: 0,
+        default: 0,
+      },
+
+      currency: {
+        type: String,
+        trim: true,
+        default: "INR",
+      },
+    },
+
+    // ---------- Inventory Details ----------
+    inventory: {
+      quantity: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      reservedQuantity: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      lowStockThreshold: {
+        type: Number,
+        default: 5,
+        min: 0,
+      },
+
+      allowBackorder: {
+        type: Boolean,
+        default: false,
+      },
+
+      stockStatus: {
+        type: String,
+        enum: ["in_stock", "low_stock", "out_of_stock", "backorder"],
+        default: "out_of_stock",
+      },
+    },
+
+    // ---------- Specification Details ----------
+    specifications: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        value: {
+          type: mongoose.Schema.Types.Mixed,
+          required: true,
+        },
+
+        unit: {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+productBaseSchema.virtual("availableQuantity").get(function () {
+  return Math.max(
+    this.inventory.quantity - this.inventory.reservedQuantity,
+    0
+  );
+});
 
 module.exports = mongoose.model("ProductBase", productBaseSchema);

@@ -9,13 +9,6 @@ const productImageSchema = new mongoose.Schema(
       index: true,
     },
 
-    variantId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ProductVariant",
-      default: null,
-      index: true,
-    },
-
     imageUrl: {
       type: String,
       required: true,
