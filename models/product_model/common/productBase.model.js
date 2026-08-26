@@ -56,6 +56,11 @@ const productBaseSchema = new mongoose.Schema(
       trim: true,
     },
 
+    fullDescription: {
+      type: String,
+      trim: true,
+    },
+
     highlights: [
       {
         type: String,
@@ -180,6 +185,11 @@ const productBaseSchema = new mongoose.Schema(
     ],
 
     // ---------- Return ----------
+
+    isReturnable : {
+      type:Boolean
+    },
+
     returnPolicy: {
       type: String,
       trim: true,

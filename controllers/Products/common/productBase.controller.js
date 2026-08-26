@@ -38,6 +38,7 @@ const createBaseProduct = async (req, res) => {
     // Content
     description,
     shortDescription,
+    fullDescription,
     highlights,
     features,
     whatsIncluded,
@@ -118,6 +119,7 @@ const createBaseProduct = async (req, res) => {
       // Content
       description,
       shortDescription,
+      fullDescription,
       highlights: parseIfJSON(highlights, []),
       features: parseIfJSON(features, []),
       whatsIncluded: parseIfJSON(whatsIncluded, []),
