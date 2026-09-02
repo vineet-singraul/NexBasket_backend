@@ -11,6 +11,7 @@ const storeRoutes = require("./routes/store.routes.js");
 const electronicsRoutes = require("./routes/electranicsProduct.routes.js");
 const productRoutes = require("./routes/product.routes.js");
 const category = require("./routes/category.routes.js");
+const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 
 const PORT = process.env.PORT || 8000;
 
@@ -44,6 +45,7 @@ app.use("/api/store", storeRoutes)
 app.use("/api/electronics", electronicsRoutes)
 app.use("/api/product", productRoutes);
 app.use("/api/category", category);
+app.use("/api/ownerDashboard",ownerDashboard)
 
 app.listen(PORT, () => {
   connectDB().catch((err) => console.error("MongoDB connection error:", err.message));

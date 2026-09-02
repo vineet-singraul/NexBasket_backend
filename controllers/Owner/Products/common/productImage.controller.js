@@ -1,9 +1,9 @@
-const BaseProductModel = require("../../../models/product_model/common/productBase.model.js");
-const productImageModel = require("../../../models/product_model/common/productImage.model.js");
+const BaseProductModel = require("../../../../models/product_model/common/productBase.model.js");
+const productImageModel = require("../../../../models/product_model/common/productImage.model.js");
 const {
   uploadBufferToCloudinary,
   deleteFromCloudinary,
-} = require("../../../utils/cloudinary.util.js");
+} = require("../../../../utils/cloudinary.util.js");
 
 // Add Multiple Product Images
 const addProductImages = async (req, res) => {

@@ -1,4 +1,4 @@
-const BaseProductModel = require("../../../models/product_model/common/productBase.model.js");
+const BaseProductModel = require("../../../../models/product_model/common/productBase.model.js");
 
 // Convert HTML form/checkbox values ("on", "true", "1", ...) to a real boolean.
 // Returns undefined when the value itself is undefined so schema defaults still apply.

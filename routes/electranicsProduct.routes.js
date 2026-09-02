@@ -5,7 +5,7 @@ const {
   getElectronicsProduct,
   updateElectronicsProduct,
   deleteElectronicsProduct,
-} = require("../controllers/Products/electranics/electranics.controller.js");
+} = require("../controllers/Owner/Products/electranics/electranics.controller.js");
 
 const router = express.Router();
 

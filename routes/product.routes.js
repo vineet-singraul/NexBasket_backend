@@ -2,12 +2,12 @@ const express = require("express");
 
 const {
   createBaseProduct,
-} = require("../controllers/Products/common/productBase.controller.js");
+} = require("../controllers/Owner/Products/common/productBase.controller.js");
 const {
   addProductImages,
   getProductImages,
   deleteProductImage,
-} = require("../controllers/Products/common/productImage.controller.js");
+} = require("../controllers/Owner/Products/common/productImage.controller.js");
 const upload = require("../middlewares/upload.middleware.js");
 
 const router = express.Router();

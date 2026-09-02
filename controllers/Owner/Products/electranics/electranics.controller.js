@@ -1,5 +1,5 @@
-const BaseProductModel = require("../../../models/product_model/common/productBase.model.js");
-const electronicsProductModel = require("../../../models/product_model/electronics/electronicsProduct.model.js");
+const BaseProductModel = require("../../../../models/product_model/common/productBase.model.js");
+const electronicsProductModel = require("../../../../models/product_model/electronics/electronicsProduct.model.js");
 
 // Create Electronics Product
 const createElectronicsProduct = async (req, res) => {
@@ -9,6 +9,15 @@ const createElectronicsProduct = async (req, res) => {
     deviceCategory,
     connectivity,
     power,
+    battery,
+    display,
+    memory,
+    processor,
+    os,
+    smartFeatures,
+    ipRating,
+    energyRating,
+    sensors,
     warranty,
     isActive,
   } = req.body;
@@ -41,14 +50,27 @@ const createElectronicsProduct = async (req, res) => {
       });
     }
 
+    if (warranty !== undefined) product.warranty = warranty;
+    if (isActive !== undefined) product.isActive = isActive;
+    if (warranty !== undefined || isActive !== undefined) {
+      await product.save();
+    }
+
     const electronicsProduct = await electronicsProductModel.create({
       productId,
       deviceType,
       deviceCategory,
       connectivity,
       power,
-      warranty,
-      isActive,
+      battery,
+      display,
+      memory,
+      processor,
+      os,
+      smartFeatures,
+      ipRating,
+      energyRating,
+      sensors,
     });
 
     return res.status(201).json({
@@ -98,8 +120,23 @@ const getElectronicsProduct = async (req, res) => {
 // Update Electronics Product
 const updateElectronicsProduct = async (req, res) => {
   const { productId } = req.params;
-  const { deviceType, deviceCategory, connectivity, power, warranty, isActive } =
-    req.body;
+  const {
+    deviceType,
+    deviceCategory,
+    connectivity,
+    power,
+    battery,
+    display,
+    memory,
+    processor,
+    os,
+    smartFeatures,
+    ipRating,
+    energyRating,
+    sensors,
+    warranty,
+    isActive,
+  } = req.body;
 
   try {
     const electronicsProduct = await electronicsProductModel.findOne({
@@ -119,10 +156,30 @@ const updateElectronicsProduct = async (req, res) => {
     if (connectivity !== undefined)
       electronicsProduct.connectivity = connectivity;
     if (power !== undefined) electronicsProduct.power = power;
-    if (warranty !== undefined) electronicsProduct.warranty = warranty;
-    if (isActive !== undefined) electronicsProduct.isActive = isActive;
+    if (battery !== undefined) electronicsProduct.battery = battery;
+    if (display !== undefined) electronicsProduct.display = display;
+    if (memory !== undefined) electronicsProduct.memory = memory;
+    if (processor !== undefined) electronicsProduct.processor = processor;
+    if (os !== undefined) electronicsProduct.os = os;
+    if (smartFeatures !== undefined)
+      electronicsProduct.smartFeatures = smartFeatures;
+    if (ipRating !== undefined) electronicsProduct.ipRating = ipRating;
+    if (energyRating !== undefined)
+      electronicsProduct.energyRating = energyRating;
+    if (sensors !== undefined) electronicsProduct.sensors = sensors;
 
     await electronicsProduct.save();
+
+    if (warranty !== undefined || isActive !== undefined) {
+      const product = await BaseProductModel.findById(
+        electronicsProduct.productId
+      );
+      if (product) {
+        if (warranty !== undefined) product.warranty = warranty;
+        if (isActive !== undefined) product.isActive = isActive;
+        await product.save();
+      }
+    }
 
     return res.status(200).json({
       success: true,

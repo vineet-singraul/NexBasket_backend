@@ -362,10 +362,15 @@ const productBaseSchema = new mongoose.Schema(
       },
 
       stockStatus: {
-        type: String,
+        type: String, 
         enum: ["in_stock", "low_stock", "out_of_stock", "backorder"],
         default: "out_of_stock",
       },
+    },
+
+    isProductListtingComplete : {
+      type:Boolean,
+      default:false
     },
 
     // ---------- Specification Details ----------

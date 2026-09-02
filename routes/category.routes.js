@@ -7,7 +7,7 @@ const {
   getCategoryOfProductById,
   updateCategoryOfProduct,
   deleteCategoryOfProduct,
-} = require("../controllers/Products/category/category.controller.js");
+} = require("../controllers/Owner/Products/category/category.controller.js");
 
 const router = express.Router();
 
