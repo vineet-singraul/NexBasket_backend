@@ -127,7 +127,6 @@ const signIn = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
-    console.log("user : ",user)
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
