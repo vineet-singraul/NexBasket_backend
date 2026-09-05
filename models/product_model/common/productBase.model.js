@@ -394,6 +394,17 @@ const productBaseSchema = new mongoose.Schema(
         },
       },
     ],
+
+    // ----------------- Check : tht image or actual product uploaded or Not --------------------------
+    isImageUploaded : {
+      type:Boolean,
+      default:false
+    },
+
+    isUploadedActualProduct : {
+      type:Boolean,
+      default:false
+    }
   },
   {
     timestamps: true,
