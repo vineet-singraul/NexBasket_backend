@@ -381,6 +381,35 @@ const deleteBaseProduct = async (req, res) => {
 
 
 
+
+
+
+const getProductById = async (req, res) => {
+  const { productId } = req.params;
+  if (!productId) {
+    return res.status(400).json({success:false,message:"product not found ... "})
+  }
+  
+  try {
+    const product = await BaseProductModel.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    return res.status(201).json({success:true, message:"product details load succesfuly ... ", data:product})
+  } catch (error) {
+    return res.status(400).json({success:false, message:"product details can not be load !! try again"})
+  }
+
+
+}
+
+
+
 module.exports = {
-  createBaseProduct, editBaseProduct, deleteBaseProduct
+  createBaseProduct, editBaseProduct, deleteBaseProduct, getProductById
 };

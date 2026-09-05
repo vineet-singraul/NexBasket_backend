@@ -1,7 +1,7 @@
 const express = require("express");
 
 const {
-  createBaseProduct,editBaseProduct,deleteBaseProduct
+  createBaseProduct,editBaseProduct,deleteBaseProduct,getProductById
 } = require("../controllers/Owner/Products/common/productBase.controller.js");
 const {
   addProductImages,
@@ -14,7 +14,8 @@ const router = express.Router();
 
 router.post("/createBaseProduct", createBaseProduct);
 router.put("/editBaseProduct/:productId", editBaseProduct);
-router.delete("/deleteBaseProduct/:productId", deleteBaseProduct)
+router.delete("/deleteBaseProduct/:productId", deleteBaseProduct);
+router.get("/getProductById/:productId", getProductById)
 
 router.post("/:productId/images", upload.array("images", 10), addProductImages);
 router.get("/:productId/images", getProductImages);
