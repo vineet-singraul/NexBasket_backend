@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
 
 const app = express();
 const connectDB = require("./config/db.js");
@@ -46,6 +47,19 @@ app.use("/api/electronics", electronicsRoutes)
 app.use("/api/product", productRoutes);
 app.use("/api/category", category);
 app.use("/api/ownerDashboard",ownerDashboard)
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+  if (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message || "Something went wrong.",
+    });
+  }
+  next();
+});
 
 app.listen(PORT, () => {
   connectDB().catch((err) => console.error("MongoDB connection error:", err.message));

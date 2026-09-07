@@ -19,6 +19,18 @@ const addProductImages = async (req, res) => {
       });
     }
 
+    try {
+      const productsUpdate = await BaseProductModel.findById(productId);
+      productsUpdate.isImageUploaded = true
+    } catch (error) {
+      return res
+        .status(401)
+        .json({
+          success: false,
+          message: "Can not uppdate the product details",
+        });
+    }
+
     const files = req.files;
 
     if (!files || !files.length) {
