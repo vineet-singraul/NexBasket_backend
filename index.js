@@ -14,6 +14,8 @@ const productRoutes = require("./routes/product.routes.js");
 const category = require("./routes/category.routes.js");
 const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 
+const userHomePage = require("./routes/users/userHomePage.routes.js");
+
 const PORT = process.env.PORT || 8000;
 
 const allowedOrigins = [
@@ -42,11 +44,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/store", storeRoutes)
-app.use("/api/electronics", electronicsRoutes)
+app.use("/api/store", storeRoutes);
+app.use("/api/electronics", electronicsRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/category", category);
-app.use("/api/ownerDashboard",ownerDashboard)
+app.use("/api/ownerDashboard", ownerDashboard);
+
+app.use("/api/userHomePage", userHomePage);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
@@ -54,7 +58,7 @@ app.use((err, req, res, next) => {
   }
   if (err) {
     return res.status(400).json({
-      success: false,
+      success: false, 
       message: err.message || "Something went wrong.",
     });
   }
@@ -62,6 +66,8 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  connectDB().catch((err) => console.error("MongoDB connection error:", err.message));
+  connectDB().catch((err) =>
+    console.error("MongoDB connection error:", err.message),
+  );
   console.log(`Server is running on port ${PORT}`);
-});
+}); 
