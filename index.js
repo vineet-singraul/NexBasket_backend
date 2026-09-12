@@ -15,6 +15,7 @@ const category = require("./routes/category.routes.js");
 const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 
 const userHomePage = require("./routes/users/userHomePage.routes.js");
+const UserShowCategory = require("./routes/users/userCategoryPage.routes.js")
 
 const PORT = process.env.PORT || 8000;
 
@@ -51,6 +52,7 @@ app.use("/api/category", category);
 app.use("/api/ownerDashboard", ownerDashboard);
 
 app.use("/api/userHomePage", userHomePage);
+app.use("/api/UserShowCategory", UserShowCategory)
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {

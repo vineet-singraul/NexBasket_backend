@@ -26,12 +26,13 @@ const getUserHomePageDetails = async (req, res)  => {
         return keywords.some((keyword) => name.includes(keyword) || slug.includes(keyword))
      }
 
-     const electranics = AllData.filter((product) => categoryMatchesAny(product, ["electr"]))
-     const womans = AllData.filter((product) => categoryMatchesAny(product, ["woman", "women"]))
+     const electranics = AllData.filter((product) => categoryMatchesAny(product, ["electr"])).slice(0, 4);
+     const womans = AllData.filter((product) => categoryMatchesAny(product, ["woman", "women"])).slice(0, 4);
      const mans = AllData.filter(
         (product) => categoryMatchesAny(product, ["man", "men"]) && !categoryMatchesAny(product, ["woman", "women"])
-     )
-     return res.status(200).json({success:true, message:"fetched all product details", data:AllData, Electranics : electranics, Mans:mans,Womans:womans})
+     ).slice(0, 4);
+     const grocery = AllData.filter((product) => categoryMatchesAny(product , ["Grocery" , "grocery"])).slice(0, 4)
+     return res.status(200).json({success:true, message:"fetched all product details", data:AllData, Electranics : electranics, Mans:mans,Womans:womans, Grocery:grocery});
 
    } catch (error) {
      console.error(error)
