@@ -16,6 +16,9 @@ const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 
 const userHomePage = require("./routes/users/userHomePage.routes.js");
 const UserShowCategory = require("./routes/users/userCategoryPage.routes.js")
+const getParticulerFillter = require("./routes/users/getParticulerFillter.routes.js");
+
+const AdminFillter = require("./routes/Admin/fillter.routes.js");
 
 const PORT = process.env.PORT || 8000;
 
@@ -52,7 +55,10 @@ app.use("/api/category", category);
 app.use("/api/ownerDashboard", ownerDashboard);
 
 app.use("/api/userHomePage", userHomePage);
-app.use("/api/UserShowCategory", UserShowCategory)
+app.use("/api/UserShowCategory", UserShowCategory);
+app.use("/api/getParticulerFillter", getParticulerFillter);
+
+app.use("/api/AdminFillter", AdminFillter);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
