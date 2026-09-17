@@ -12,15 +12,15 @@ const signUp = async (req, res) => {
     const { fullName, email, password, mobile, role } = req.body;
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "User Already exist" });
+      return res.status(400).json({ message: "User already exists" });
     }
     if (password.length < 6) {
       return res
         .status(400)
-        .json({ message: "Passwors must be atleast 6 latter" });
+        .json({ message: "Password must be 6+ characters" });
     }
     if (mobile.length < 10) {
-      return res.status(400).json({ message: "mobile must 10 latter" });
+      return res.status(400).json({ message: "Mobile must be 10 digits" });
     }
 
     const hashedPassword = await hashPassword(password);
