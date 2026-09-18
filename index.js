@@ -14,6 +14,7 @@ const productRoutes = require("./routes/product.routes.js");
 const category = require("./routes/category.routes.js");
 const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 const AiGenration = require("./routes/Ai Model/autogenrates.routes.js");
+const AiGrock = require("./routes/Ai Model/grokModel.routes.js")
 
 const userHomePage = require("./routes/users/userHomePage.routes.js");
 const UserShowCategory = require("./routes/users/userCategoryPage.routes.js");
@@ -55,6 +56,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/category", category);
 app.use("/api/ownerDashboard", ownerDashboard);
 app.use("/api/AiGenration", AiGenration);
+app.use("/api/AiGrock", AiGrock)
 
 app.use("/api/userHomePage", userHomePage);
 app.use("/api/UserShowCategory", UserShowCategory);
