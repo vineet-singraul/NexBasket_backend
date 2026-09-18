@@ -23,6 +23,11 @@ const productBaseSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    productIs: {
+      type: String,
+      require: true,
+      trim: true,
+    },
 
     productCode: {
       type: String,
@@ -186,8 +191,8 @@ const productBaseSchema = new mongoose.Schema(
 
     // ---------- Return ----------
 
-    isReturnable : {
-      type:Boolean
+    isReturnable: {
+      type: Boolean,
     },
 
     returnPolicy: {
@@ -362,15 +367,15 @@ const productBaseSchema = new mongoose.Schema(
       },
 
       stockStatus: {
-        type: String, 
+        type: String,
         enum: ["in_stock", "low_stock", "out_of_stock", "backorder"],
         default: "out_of_stock",
       },
     },
 
-    isProductListtingComplete : {
-      type:Boolean,
-      default:false
+    isProductListtingComplete: {
+      type: Boolean,
+      default: false,
     },
 
     // ---------- Specification Details ----------
@@ -396,28 +401,25 @@ const productBaseSchema = new mongoose.Schema(
     ],
 
     // ----------------- Check : tht image or actual product uploaded or Not --------------------------
-    isImageUploaded : {
-      type:Boolean,
-      default:false
+    isImageUploaded: {
+      type: Boolean,
+      default: false,
     },
 
-    isUploadedActualProduct : {
-      type:Boolean,
-      default:false
-    }
+    isUploadedActualProduct: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 productBaseSchema.virtual("availableQuantity").get(function () {
-  return Math.max(
-    this.inventory.quantity - this.inventory.reservedQuantity,
-    0
-  );
+  return Math.max(this.inventory.quantity - this.inventory.reservedQuantity, 0);
 });
 
 module.exports = mongoose.model("ProductBase", productBaseSchema);

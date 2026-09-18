@@ -34,7 +34,7 @@ const createBaseProduct = async (req, res) => {
     productType,
     categoryId,
     subcategoryId,
-
+    productIs,
     // Content
     description,
     shortDescription,
@@ -115,6 +115,7 @@ const createBaseProduct = async (req, res) => {
       productType,
       categoryId,
       subcategoryId,
+      productIs,
 
       // Content
       description,
