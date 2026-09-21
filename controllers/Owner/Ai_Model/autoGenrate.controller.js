@@ -1,4 +1,5 @@
 const { text } = require("express");
+const { model } = require("mongoose");
 
 const LENGTH_OPTIONS = {
   short: { words: 50, maxOutputTokens: 150 },
@@ -6,6 +7,7 @@ const LENGTH_OPTIONS = {
   extralong: { words: 120, maxOutputTokens: 300 },
 };
 
+// This model genrate the Discription
 const generateShortDescription = async (req, res) => {
   try {
     const { productName, length } = req.params;
@@ -86,6 +88,7 @@ const generateShortDescription = async (req, res) => {
   }
 };
 
+// This model genrate the specification
 const generateSpecificationOfProduct = async (req, res) => {
   try {
     const { productName } = req.params;
@@ -236,6 +239,7 @@ const generateSpecificationOfProduct = async (req, res) => {
   }
 };
 
+// This mode genrate the SEO or Heiglights :
 const autoGenrateSeoOrProductMnageMnet = async (req, res) => {
   try {
     const { productName } = req.params;
@@ -379,4 +383,101 @@ const autoGenrateSeoOrProductMnageMnet = async (req, res) => {
   }
 };
 
-module.exports = { generateShortDescription, generateSpecificationOfProduct, autoGenrateSeoOrProductMnageMnet };
+// This model check the filled listing details :
+const aiAutomaticallyValidateProduct = async (req, res) => {
+  try {
+    const payload = req.body;
+
+    if (!payload || Object.keys(payload).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Product payload is required",
+      });
+    }
+
+    const response = await fetch("https://api.cohere.com/v2/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "command-a-03-2025",
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: `You are an e-commerce product validator.
+          Reply ONLY in JSON format:
+          {"isValid": bool, "score": 0-100, "errors": [], "warnings": [], "suggestions": []}`,
+          },
+          {
+            role: "user",
+            content: `Validate this product payload: ${JSON.stringify(payload)}`,
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Cohere API Error:", data);
+
+      return res.status(response.status).json({
+        success: false,
+        message: data?.message || "Failed to validate product",
+      });
+    }
+
+    const generatedText = data?.message?.content?.[0]?.text;
+
+    if (!generatedText) {
+      return res.status(500).json({
+        success: false,
+        message: "No validation result generated",
+      });
+    }
+
+    let result;
+
+    try {   
+      result = JSON.parse(generatedText);
+    } catch (parseError) {
+      console.error("JSON Parse Error:", parseError);
+      console.error("Cohere Response:", generatedText);
+
+      return res.status(500).json({
+        success: false,
+        message: "Cohere returned invalid JSON",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      isValid: Boolean(result?.isValid),
+      score: Number(result?.score ?? 0),
+      errors: Array.isArray(result?.errors) ? result.errors.map(String) : [],
+      warnings: Array.isArray(result?.warnings)
+        ? result.warnings.map(String)
+        : [],
+      suggestions: Array.isArray(result?.suggestions)
+        ? result.suggestions.map(String)
+        : [],
+    });
+  } catch (error) {
+    console.error("Error validating product:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while validating the product",
+    });
+  }
+};
+
+module.exports = {
+  generateShortDescription,
+  generateSpecificationOfProduct,
+  autoGenrateSeoOrProductMnageMnet,
+  aiAutomaticallyValidateProduct,
+};

@@ -38,7 +38,7 @@ const productBaseSchema = new mongoose.Schema(
     },
 
     productType: {
-      type: String,
+      type: String, 
       trim: true,
       index: true,
     },
