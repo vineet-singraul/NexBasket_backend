@@ -179,4 +179,134 @@ const sentOtpEmailInCreateStoreTime = async ({
 
 
 
-module.exports = { sendOtpEmail, sentOtpEmailInCreateStoreTime };
+// Sent to the store's registered email whenever a product is created —
+// shows the product details and a button back to the owner's dashboard.
+const sendProductCreatedEmail = async ({ toEmail, ownerName, storeName, product }) => {
+  const dashboardUrl = `${process.env.FRONTEND_URL}/owner/dashboard`;
+  const greetingName = ownerName || storeName || "there";
+
+  const formatPrice = (value) =>
+    typeof value === "number" ? `₹${value.toLocaleString("en-IN")}` : "—";
+
+  await sgMail.send({
+    from: FROM_EMAIL,
+    to: toEmail,
+    subject: `✅ Product "${product.title}" added successfully`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Added</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:30px 0;">
+<tr>
+<td align="center">
+
+<table width="650" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.08);">
+
+    <!-- Title -->
+    <tr>
+        <td align="center" style="padding:35px 40px 10px;">
+            <h1 style="margin:0;color:#222;font-size:28px;">
+                ✅ Product Added!
+            </h1>
+
+            <p style="font-size:16px;color:#666;line-height:26px;">
+                Hi <strong>${greetingName}</strong>, your product has been listed
+                successfully on <strong>NexBasket</strong>.
+            </p>
+        </td>
+    </tr>
+
+    <!-- Product Details -->
+    <tr>
+        <td style="padding:10px 40px;">
+            <table width="100%" cellpadding="0" cellspacing="0"
+                style="background:#f8f9ff;border:1px solid #e5e7ff;border-radius:10px;">
+                <tr>
+                    <td style="padding:20px 25px;color:#333;font-size:15px;line-height:30px;">
+                        <strong>Product Name:</strong> ${product.title}<br>
+                        <strong>Product Code:</strong> ${product.productCode || "—"}<br>
+                        <strong>SKU:</strong> ${product.sku || "—"}<br>
+                        <strong>Category / Type:</strong> ${product.productType || "—"}<br>
+                        <strong>Selling Price:</strong> ${formatPrice(product.sellingPrice)}
+                        ${
+                          product.mrp && product.mrp !== product.sellingPrice
+                            ? ` <span style="color:#999;text-decoration:line-through;">${formatPrice(product.mrp)}</span>`
+                            : ""
+                        }<br>
+                        <strong>Status:</strong> ${product.status || "—"}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Store Details -->
+    <tr>
+        <td style="padding:20px 40px 0;">
+            <div style="
+                background:#fff7e6;
+                border-left:5px solid #ff9800;
+                padding:16px 18px;
+                border-radius:6px;
+                color:#555;
+                font-size:14px;
+                line-height:24px;">
+                <strong>Store:</strong> ${storeName}<br>
+                <strong>Registered Email:</strong> ${toEmail}
+            </div>
+        </td>
+    </tr>
+
+    <!-- Button -->
+    <tr>
+        <td align="center" style="padding:35px;">
+            <a href="${dashboardUrl}"
+               style="
+               background:#4f46e5;
+               color:#ffffff;
+               text-decoration:none;
+               padding:15px 40px;
+               border-radius:8px;
+               font-size:16px;
+               font-weight:bold;
+               display:inline-block;">
+               Check Your Added Product
+            </a>
+        </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+        <td align="center"
+            style="
+            background:#f5f5f5;
+            color:#777;
+            padding:30px;
+            font-size:14px;
+            line-height:24px;">
+
+            <strong>NexBasket Team</strong><br>
+            Thank you for choosing NexBasket ❤️
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+`,
+  });
+};
+
+module.exports = { sendOtpEmail, sentOtpEmailInCreateStoreTime, sendProductCreatedEmail };

@@ -1,4 +1,6 @@
 const BaseProductModel = require("../../../../models/product_model/common/productBase.model.js");
+const StoreModel = require("../../../../models/store_model/store.model.js");
+const { sendProductCreatedEmail } = require("../../../../utils/mailer.util.js");
 
 // Convert HTML form/checkbox values ("on", "true", "1", ...) to a real boolean.
 // Returns undefined when the value itself is undefined so schema defaults still apply.
@@ -25,7 +27,7 @@ const parseIfJSON = (value, fallback) => {
 
 // Create Base Product — base details + SKU/variant details + pricing + inventory + specifications, all in one call
 const createBaseProduct = async (req, res) => {
-  const {
+  const { 
     // Identity
     storeId,
     title,
@@ -186,6 +188,47 @@ const createBaseProduct = async (req, res) => {
 
       specifications: parseIfJSON(specifications, []),
     });
+
+    if (baseProduct) {
+      // Email failures must never turn a successful product creation into a
+      // "creation failed" response, so this runs in its own try/catch and is
+      // never awaited before responding.
+      try {
+        const store = await StoreModel.findById(storeId)
+          .select("storeName owner")
+          .populate("owner", "fullName email");
+
+        const ownerEmail = store?.owner?.email;
+
+        if (ownerEmail) {
+          console.log(`Sending product email to owner ${ownerEmail} for store ${storeId}`);
+          sendProductCreatedEmail({
+            toEmail: ownerEmail,
+            ownerName: store?.owner?.fullName,
+            storeName: store?.storeName,
+            product: {
+              title: baseProduct.title,
+              productCode: baseProduct.productCode,
+              sku: baseProduct.sku,
+              productType: baseProduct.productType,
+              mrp: baseProduct.pricing?.mrp,
+              sellingPrice: baseProduct.pricing?.sellingPrice,
+              status: baseProduct.status,
+            },
+          })
+            .then(() => console.log(`✅ Product email sent to ${ownerEmail}`))
+            .catch((err) =>
+              console.error("❌ Product email send failed:", err?.response?.body || err.message),
+            );
+        } else {
+          console.log(
+            `Product email skipped — store ${storeId} has no owner email (owner: ${store?.owner ?? "not found"})`,
+          );
+        }
+      } catch (notifyError) {
+        console.error("Product email setup error:", notifyError);
+      }
+    }
 
     return res.status(201).json({
       success: true,
