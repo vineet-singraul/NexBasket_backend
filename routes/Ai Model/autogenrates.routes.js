@@ -4,6 +4,7 @@ const {
   generateSpecificationOfProduct,
   autoGenrateSeoOrProductMnageMnet,
   aiAutomaticallyValidateProduct,
+  autoBrandPridiction
 } = require("../../controllers/Owner/Ai_Model/autoGenrate.controller.js");
 
 const router = express.Router();
@@ -24,5 +25,8 @@ router.get(
 );
 
 router.post("/aiAutomaticallyValidateProduct", aiAutomaticallyValidateProduct);
+
+
+router.post("/autoBrandPridiction", autoBrandPridiction)
 
 module.exports = router

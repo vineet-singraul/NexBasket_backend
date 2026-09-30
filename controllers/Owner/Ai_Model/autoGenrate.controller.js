@@ -441,7 +441,7 @@ const aiAutomaticallyValidateProduct = async (req, res) => {
 
     let result;
 
-    try {   
+    try {
       result = JSON.parse(generatedText);
     } catch (parseError) {
       console.error("JSON Parse Error:", parseError);
@@ -475,9 +475,98 @@ const aiAutomaticallyValidateProduct = async (req, res) => {
   }
 };
 
+// This Model
+const autoBrandPridiction = async (req, res) => {
+  try {
+    const payload = req.body;
+    console.log("Payload ", payload)
+    if (!payload || Object.keys(payload).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Payload is required.",
+      });
+    }
+
+    const prompt = `
+        You are a product information extraction AI.
+
+        I will provide you with a product title dynamically.
+
+        Your task is to identify and extract these 5 fields from the product title:
+
+        [0] Brand Name
+        [1] Manufacturer Name
+        [2] Model Name
+        [3] Model Number
+        [4] Manufacturer Part Number
+
+        Rules:
+        - Analyze the product title carefully.
+        - Do not invent information.
+        - If a value cannot be confidently identified from the title, return null.
+        - Brand Name should be the product brand.
+        - Manufacturer Name should be the company that manufactures the product. If it is clearly the same as the brand, you may use the brand name.
+        - Model Name should be the actual product/model name.
+        - Model Number should only contain the model number if explicitly identifiable.
+        - Manufacturer Part Number should only contain the manufacturer part number if explicitly identifiable.
+        - Return ONLY valid JSON.
+        - Do not add explanations, markdown, or extra text.
+
+        Product Title:
+        "${payload}"
+        `;
+
+    const response = await fetch("https://api.cohere.com/v2/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "command-a-03-2025",
+        messages: [
+          {
+            role: "system",
+            content: prompt,
+          },
+          {
+            role: "user",
+            content: JSON.stringify(payload),
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Cohere Error:", data);
+
+      return res.status(response.status).json({
+        success: false,
+        message: "Cohere API error",
+        error: data,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: data.message.content,
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong.",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   generateShortDescription,
   generateSpecificationOfProduct,
   autoGenrateSeoOrProductMnageMnet,
   aiAutomaticallyValidateProduct,
+  autoBrandPridiction,
 };
