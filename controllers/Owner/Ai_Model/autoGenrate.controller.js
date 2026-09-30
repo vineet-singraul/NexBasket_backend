@@ -478,12 +478,13 @@ const aiAutomaticallyValidateProduct = async (req, res) => {
 // This Model
 const autoBrandPridiction = async (req, res) => {
   try {
-    const payload = req.body;
-    console.log("Payload ", payload)
-    if (!payload || Object.keys(payload).length === 0) {
+    const title =
+      typeof req.body?.title === "string" ? req.body.title.trim() : "";
+
+    if (!title) {
       return res.status(400).json({
         success: false,
-        message: "Payload is required.",
+        message: "Product title is required.",
       });
     }
 
@@ -513,7 +514,7 @@ const autoBrandPridiction = async (req, res) => {
         - Do not add explanations, markdown, or extra text.
 
         Product Title:
-        "${payload}"
+        "${title}"
         `;
 
     const response = await fetch("https://api.cohere.com/v2/chat", {
@@ -531,7 +532,7 @@ const autoBrandPridiction = async (req, res) => {
           },
           {
             role: "user",
-            content: JSON.stringify(payload),
+            content: title,
           },
         ],
       }),
