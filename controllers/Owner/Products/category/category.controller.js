@@ -1,9 +1,10 @@
 const categoryModel = require("../../../../models/product_model/category/category.model.js");
+const { checkCategortExiste } = require("../../../../utils/validations.js");
 
 // Create Category
 const createCategoryOfProduct = async (req, res) => {
   try {
-    const {ownerId, name, slug, description, image, isActive } = req.body;
+    const { ownerId, name, slug, description, image, isActive } = req.body;
 
     if (!name || !slug) {
       return res.status(400).json({
@@ -21,6 +22,35 @@ const createCategoryOfProduct = async (req, res) => {
         success: false,
         message: "Category already exists.",
       });
+    }
+
+    const AllCategory = await categoryModel
+      .find({ isActive: true })
+      .select("name");
+
+    if (AllCategory.length > 0) {
+      const categoryNames = AllCategory.map((category) => category.name);
+
+      let validation;
+
+      try {
+        validation = await checkCategortExiste(name, categoryNames);
+      } catch (validationError) {
+        // AI check unavailable: do not block category creation
+        console.error("Category validation skipped:", validationError.message);
+      }
+
+      if (validation && validation.allowed === false) {
+        return res.status(409).json({
+          success: false,
+          message: validation.matchedCategory
+            ? `Category cannot be created because it belongs under "${validation.matchedCategory}".`
+            : "Category cannot be created because it overlaps with an existing category.",
+          matchedCategory: validation.matchedCategory,
+          relationship: validation.relationship,
+          reason: validation.reason,
+        });
+      }
     }
 
     const category = await categoryModel.create({

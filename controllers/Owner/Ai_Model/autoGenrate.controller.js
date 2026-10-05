@@ -475,7 +475,7 @@ const aiAutomaticallyValidateProduct = async (req, res) => {
   }
 };
 
-// This Model
+// This Model Brand Pridiction 
 const autoBrandPridiction = async (req, res) => {
   try {
     const title =
