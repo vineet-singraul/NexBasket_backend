@@ -4,6 +4,8 @@ const baseProduct = require("../../../models/product_model/common/productBase.mo
 const getParticulerFillter = async (req, res) => {
   const { findingKeywords } = req.params;
 
+  console.log("<------------->", findingKeywords);
+
   if (!findingKeywords) {
     return res.status(400).json({
       success: false,
@@ -16,14 +18,14 @@ const getParticulerFillter = async (req, res) => {
       name: findingKeywords,
     });
 
-    // const getData = await baseProduct.find({ 
+    // const getData = await baseProduct.find({
     //   productType: findingKeywords,
     // });
 
     return res.status(200).json({
       success: true,
       message: "Fillter fetched successfully",
-      Fillters : getFillter,
+      Fillters: getFillter,
       // data : getData
     });
   } catch (error) {
