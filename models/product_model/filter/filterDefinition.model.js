@@ -33,7 +33,6 @@ const filterDefinitionSchema = new mongoose.Schema(
             "range",
             "checkbox",
             "radio",
-            "rating",
             "boolean"
           ],
           required: true,
