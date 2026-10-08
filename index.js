@@ -15,6 +15,7 @@ const category = require("./routes/category.routes.js");
 const ownerDashboard = require("./routes/ownerDashboard.routes.js")
 const AiGenration = require("./routes/Ai Model/autogenrates.routes.js");
 const AiGrock = require("./routes/Ai Model/grokModel.routes.js")
+const productFilters = require("./routes/users/filter.routes.js");
 
 const userHomePage = require("./routes/users/userHomePage.routes.js");
 const UserShowCategory = require("./routes/users/userCategoryPage.routes.js");
@@ -56,11 +57,12 @@ app.use("/api/product", productRoutes);
 app.use("/api/category", category);
 app.use("/api/ownerDashboard", ownerDashboard);
 app.use("/api/AiGenration", AiGenration);
-app.use("/api/AiGrock", AiGrock)
+app.use("/api/AiGrock", AiGrock);
 
 app.use("/api/userHomePage", userHomePage);
 app.use("/api/UserShowCategory", UserShowCategory);
 app.use("/api/getParticulerFillter", getParticulerFillter);
+app.use("/api/productFilters", productFilters);
 
 app.use("/api/AdminFillter", AdminFillter);
 

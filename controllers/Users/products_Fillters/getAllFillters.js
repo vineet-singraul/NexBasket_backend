@@ -4,8 +4,6 @@ const baseProduct = require("../../../models/product_model/common/productBase.mo
 const getParticulerFillter = async (req, res) => {
   const { findingKeywords } = req.params;
 
-  console.log("<------------->", findingKeywords);
-
   if (!findingKeywords) {
     return res.status(400).json({
       success: false,
