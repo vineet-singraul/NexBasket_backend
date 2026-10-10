@@ -90,7 +90,7 @@ const getSingleProductDetails = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Product found succesfully",
-      data: { ...product , images},
+      data: { ...product, images },
     });
   } catch (error) {
     return res
@@ -99,4 +99,46 @@ const getSingleProductDetails = async (req, res) => {
   }
 };
 
-module.exports = { getUserHomePageDetails, getSingleProductDetails };
+const getProductsByCategotyId = async (req, res) => {
+  const { categoryId } = req.params;
+
+  if (!categoryId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "some thing went wrong" });
+  }
+
+  try {
+    const products = await productModel.find({ categoryId, isActive: true });
+
+    const productIds = products.map((product) => product._id);
+    const images = await imageModel.find({ productId: { $in: productIds } });
+
+    const data = products.map((product) => {
+      const productImages = images.filter(
+        (image) => String(image.productId) === String(product._id),
+      );
+      return {
+        ...product.toObject(),
+        images: productImages,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "find all product succesfully",
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "some thing went wrong" });
+  }
+};
+
+module.exports = {
+  getUserHomePageDetails,
+  getSingleProductDetails,
+  getProductsByCategotyId,
+};
