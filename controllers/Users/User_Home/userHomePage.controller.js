@@ -137,8 +137,26 @@ const getProductsByCategotyId = async (req, res) => {
   }
 };
 
+const searchProduct = async (req, res) => {
+  const { searchKey } = req.params;
+
+  if (!searchKey) {
+    return res
+      .status(400)
+      .json({ success: true, message: "some thing went wrong" });
+  }
+
+  try {
+    const product = await productModel.find({ searchKeywords: searchKey });
+    return res.status(200).json({success:true,message:"search product successfully",data:product});
+  } catch (error) {
+    return res.status(400).json({success:false,message:"some thing went wrong"})
+  }
+};
+
 module.exports = {
   getUserHomePageDetails,
   getSingleProductDetails,
   getProductsByCategotyId,
+  searchProduct
 };
