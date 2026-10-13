@@ -137,22 +137,63 @@ const getProductsByCategotyId = async (req, res) => {
   }
 };
 
+// const searchProduct = async (req, res) => {
+//   const { searchKey } = req.params;
+
+//   if (!searchKey) {
+//     return res
+//       .status(400)
+//       .json({ success: true, message: "some thing went wrong" });
+//   }
+
+//   try {
+//     const product = await productModel.find({ searchKeywords: searchKey });
+//     return res.status(200).json({success:true,message:"search product successfully",data:product});
+//   } catch (error) {
+//     return res.status(400).json({success:false,message:"some thing went wrong"})
+//   }
+// };
+
+
+
 const searchProduct = async (req, res) => {
   const { searchKey } = req.params;
 
-  if (!searchKey) {
-    return res
-      .status(400)
-      .json({ success: true, message: "some thing went wrong" });
+  if (!searchKey || !searchKey.trim()) {
+    return res.status(400).json({
+      success: false,
+      message: "Search keyword is required",
+    });
   }
 
   try {
-    const product = await productModel.find({ searchKeywords: searchKey });
-    return res.status(200).json({success:true,message:"search product successfully",data:product});
+    // Escape special regex characters
+    const escapedSearchKey = searchKey.trim().replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+
+    const product = await productModel.find({
+      searchKeywords: {
+        $regex: escapedSearchKey,
+        $options: "i",
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Products searched successfully",
+      data: product,
+    });
   } catch (error) {
-    return res.status(400).json({success:false,message:"some thing went wrong"})
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
   }
 };
+
+
 
 module.exports = {
   getUserHomePageDetails,
