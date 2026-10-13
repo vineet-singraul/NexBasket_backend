@@ -173,17 +173,41 @@ const searchProduct = async (req, res) => {
       "\\$&"
     );
 
-    const product = await productModel.find({
-      searchKeywords: {
-        $regex: escapedSearchKey,
-        $options: "i",
-      },
+    const products = await productModel
+      .find({
+        searchKeywords: {
+          $regex: escapedSearchKey,
+          $options: "i",
+        },
+      })
+      .limit(8);
+
+    const productIds = products.map((product) => product._id);
+    const categoryIds = products.map((product) => product.categoryId);
+
+    const [images, categories] = await Promise.all([
+      imageModel.find({ productId: { $in: productIds } }),
+      categoryModel.find({ _id: { $in: categoryIds } }),
+    ]);
+
+    const data = products.map((product) => {
+      const productImages = images.filter(
+        (image) => String(image.productId) === String(product._id),
+      );
+      const category = categories.find(
+        (category) => String(category._id) === String(product.categoryId),
+      );
+      return {
+        ...product.toObject(),
+        images: productImages,
+        category: category,
+      };
     });
 
     return res.status(200).json({
       success: true,
       message: "Products searched successfully",
-      data: product,
+      data,
     });
   } catch (error) {
     return res.status(500).json({
