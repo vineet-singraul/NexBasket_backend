@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
 const productModel = require("../../../models/product_model/common/productBase.model");
 const imageModel = require("../../../models/product_model/common/productImage.model");
 const categoryModel = require("../../../models/product_model/category/category.model.js");
+const AddToWishListModel = require("../../../models/product_model/common/addToWishlist.model.js")
 
 const getUserHomePageDetails = async (req, res) => {
   try {
@@ -219,9 +221,46 @@ const searchProduct = async (req, res) => {
 
 
 
+const AddToWishList = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const userId = req.user._id;
+
+    if (!productId) {
+      return res.status(400).json({ success: false, message: "productId is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ success: false, message: "Invalid productId" });
+    }
+
+    const isProductExist = await AddToWishListModel.findOne({ userId, productId });
+
+    if (isProductExist) {
+      return res.status(409).json({ success: false, message: "Product already in wishlist" });
+    }
+
+    const product = await AddToWishListModel.create({ productId, userId, quantity });
+
+    return res.status(201).json({
+      success: true,
+      message: "Product added to wishlist successfully",
+      data: product,
+    });
+  } catch (error) {
+    // unique index (userId + productId) hit by a concurrent request
+    if (error.code === 11000) {
+      return res.status(409).json({ success: false, message: "Product already in wishlist", code:409 });
+    }
+    console.error("AddToWishList error:", error);
+    return res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+};
+
 module.exports = {
   getUserHomePageDetails,
   getSingleProductDetails,
   getProductsByCategotyId,
-  searchProduct
+  searchProduct,
+  AddToWishList
 };
