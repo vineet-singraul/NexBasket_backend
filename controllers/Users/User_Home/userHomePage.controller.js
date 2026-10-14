@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const productModel = require("../../../models/product_model/common/productBase.model");
 const imageModel = require("../../../models/product_model/common/productImage.model");
 const categoryModel = require("../../../models/product_model/category/category.model.js");
-const AddToWishListModel = require("../../../models/product_model/common/addToWishlist.model.js")
+const AddToWishListModel = require("../../../models/product_model/common/addToWishlist.model.js");
+const userModel = require("../../../models/auth_model/user.model.js");
+const AddToCartModel = require("../../../models/product_model/common/addToCart.model.js");
 
 const getUserHomePageDetails = async (req, res) => {
   try {
@@ -156,8 +158,6 @@ const getProductsByCategotyId = async (req, res) => {
 //   }
 // };
 
-
-
 const searchProduct = async (req, res) => {
   const { searchKey } = req.params;
 
@@ -170,10 +170,9 @@ const searchProduct = async (req, res) => {
 
   try {
     // Escape special regex characters
-    const escapedSearchKey = searchKey.trim().replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
+    const escapedSearchKey = searchKey
+      .trim()
+      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     const products = await productModel
       .find({
@@ -219,28 +218,39 @@ const searchProduct = async (req, res) => {
   }
 };
 
-
-
 const AddToWishList = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
     const userId = req.user._id;
 
     if (!productId) {
-      return res.status(400).json({ success: false, message: "productId is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "productId is required" });
     }
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ success: false, message: "Invalid productId" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid productId" });
     }
 
-    const isProductExist = await AddToWishListModel.findOne({ userId, productId });
+    const isProductExist = await AddToWishListModel.findOne({
+      userId,
+      productId,
+    });
 
     if (isProductExist) {
-      return res.status(409).json({ success: false, message: "Product already in wishlist" });
+      return res
+        .status(409)
+        .json({ success: false, message: "Product already in wishlist" });
     }
 
-    const product = await AddToWishListModel.create({ productId, userId, quantity });
+    const product = await AddToWishListModel.create({
+      productId,
+      userId,
+      quantity,
+    });
 
     return res.status(201).json({
       success: true,
@@ -250,9 +260,125 @@ const AddToWishList = async (req, res) => {
   } catch (error) {
     // unique index (userId + productId) hit by a concurrent request
     if (error.code === 11000) {
-      return res.status(409).json({ success: false, message: "Product already in wishlist", code:409 });
+      return res.status(409).json({
+        success: false,
+        message: "Product already in wishlist",
+        code: 409,
+      });
     }
     console.error("AddToWishList error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const ShowWishList = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    return res
+      .status(401)
+      .json({ success: false, message: "session is expired" });
+  }
+
+  try {
+    const wishlist = await AddToWishListModel.find({ userId });
+    if (wishlist.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "wishlist is empty !! please add product",
+        data: [],
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "product found successfully",
+      count: wishlist.length,
+      data: wishlist,
+    });
+  } catch (error) {
+    console.error("ShowWishList error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const DeleteWishList = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+
+    if (!userId || !productId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId and productId are required.",
+      });
+    }
+
+    const isUserExist = await userModel.findById(userId);
+
+    if (!isUserExist) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    const isProductExist = await AddToWishListModel.findOne({
+      userId,
+      productId,
+    });
+
+    if (!isProductExist) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in wishlist.",
+      });
+    }
+
+    await isProductExist.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product removed from wishlist successfully.",
+    });
+  } catch (error) {
+    console.error("DeleteWishList Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: error.message,
+    });
+  }
+};
+
+const AddToCart = async (req, res) => {
+  const { productId, userId, quantity } = req.body;
+  if (!productId || !userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "user id or product id is require." });
+  }
+
+  try {
+    const isUserExist = await userModel.findById(userId);
+    if (!isUserExist) {
+      return res.status(404).json({ success: false, message: "user not found" });
+    }
+
+    // same product again -> increase quantity instead of duplicate key error
+    const cart = await AddToCartModel.findOneAndUpdate(
+      { userId, productId },
+      { $inc: { quantity: Number(quantity) || 1 } },
+      { new: true, upsert: true }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "product added to cart", data: cart });
+  } catch (error) {
+    console.error("AddToCart error:", error);
     return res.status(500).json({ success: false, message: "Something went wrong" });
   }
 };
@@ -262,5 +388,8 @@ module.exports = {
   getSingleProductDetails,
   getProductsByCategotyId,
   searchProduct,
-  AddToWishList
+  AddToWishList,
+  ShowWishList,
+  DeleteWishList,
+  AddToCart
 };
