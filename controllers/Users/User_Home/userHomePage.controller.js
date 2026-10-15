@@ -367,12 +367,18 @@ const AddToCart = async (req, res) => {
       return res.status(404).json({ success: false, message: "user not found" });
     }
 
-    // same product again -> increase quantity instead of duplicate key error
-    const cart = await AddToCartModel.findOneAndUpdate(
-      { userId, productId },
-      { $inc: { quantity: Number(quantity) || 1 } },
-      { new: true, upsert: true }
-    );
+    const isProductExist = await AddToCartModel.findOne({ userId, productId });
+    if (isProductExist) {
+      return res
+        .status(409)
+        .json({ success: false, message: "item already in Cart" });
+    }
+
+    const cart = await AddToCartModel.create({
+      userId,
+      productId,
+      quantity: Number(quantity) || 1,
+    });
 
     return res
       .status(200)
