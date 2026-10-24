@@ -364,7 +364,9 @@ const AddToCart = async (req, res) => {
   try {
     const isUserExist = await userModel.findById(userId);
     if (!isUserExist) {
-      return res.status(404).json({ success: false, message: "user not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
     }
 
     const isProductExist = await AddToCartModel.findOne({ userId, productId });
@@ -385,7 +387,56 @@ const AddToCart = async (req, res) => {
       .json({ success: true, message: "product added to cart", data: cart });
   } catch (error) {
     console.error("AddToCart error:", error);
-    return res.status(500).json({ success: false, message: "Something went wrong" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const showCartsDetails = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "user not authenticate !! try again" });
+  }
+
+  try {
+    const data = await AddToCartModel.find({ userId });
+    const cart = [];
+    for (let i = 0; i < data.length; i++) {
+      const productDetails = await productModel.findById(data[i].productId);
+      const productImages = await imageModel.find({
+        productId: data[i].productId,
+      });
+
+      if (productDetails) {
+        cart.push({
+          ...productDetails.toObject(),
+          images: productImages,
+          quantity: data[i].quantity,
+        });
+      }
+    }
+
+    if (data.length === 0) {
+      return res.status(409).json({
+        success: true,
+        message: "now cart is empty !! please add item",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: data.length,
+      data: cart,
+      message: "data fatched successfuly.",
+    });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "soe thing went wrong" });
   }
 };
 
@@ -397,5 +448,6 @@ module.exports = {
   AddToWishList,
   ShowWishList,
   DeleteWishList,
-  AddToCart
+  AddToCart,
+  showCartsDetails,
 };
