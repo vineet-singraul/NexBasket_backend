@@ -440,6 +440,60 @@ const showCartsDetails = async (req, res) => {
   }
 };
 
+const deleteCartItem = async (req, res) => {
+  const { productId, userId } = req.params;
+  if (!productId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "product not found" });
+  }
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "user not authenticate" });
+  }
+
+  try {
+    const data = await AddToCartModel.deleteOne({ userId, productId });
+    if (data.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "item not found in cart." });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "item deleted from cart." });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "some thing went wrong." });
+  }
+};
+
+const showCaryItemCount = async (req, res) => {
+  const { productId } = req.params;
+  if (!productId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "user not authenticate" });
+  }
+
+  try {
+    const cartitemCount = await AddToCartModel.findOne({ productId }).length();
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "cart item found successfuly",
+        count: cartitemCount,
+      });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "some thing went wrong." });
+  }
+};
+
 module.exports = {
   getUserHomePageDetails,
   getSingleProductDetails,
@@ -450,4 +504,6 @@ module.exports = {
   DeleteWishList,
   AddToCart,
   showCartsDetails,
+  deleteCartItem,
+  showCaryItemCount,
 };

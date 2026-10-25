@@ -6,7 +6,9 @@ const {
   searchProduct,
   ShowWishList,
   AddToCart,
-  showCartsDetails
+  showCartsDetails,
+  deleteCartItem,
+  showCaryItemCount,
 } = require("../../controllers/Users/User_Home/userHomePage.controller.js");
 const express = require("express");
 const { protect } = require("../../middlewares/auth.middleware.js");
@@ -33,8 +35,10 @@ router.post("/AddToWishList", protect, AddToWishList);
 
 router.get("/ShowWishList/:userId", protect, ShowWishList);
 
-router.get("/showCartsDetails/:userId", protect, showCartsDetails)
+router.get("/showCartsDetails/:userId", protect, showCartsDetails);
 
 router.post("/AddToCart", protect, AddToCart);
+
+router.delete("/deleteCartItem/:productId/:userId", protect, deleteCartItem);
 
 module.exports = router;
