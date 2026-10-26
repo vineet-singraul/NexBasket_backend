@@ -9,6 +9,7 @@ const {
   showCartsDetails,
   deleteCartItem,
   showCaryItemCount,
+  ShowCountOfItem
 } = require("../../controllers/Users/User_Home/userHomePage.controller.js");
 const express = require("express");
 const { protect } = require("../../middlewares/auth.middleware.js");
@@ -40,5 +41,7 @@ router.get("/showCartsDetails/:userId", protect, showCartsDetails);
 router.post("/AddToCart", protect, AddToCart);
 
 router.delete("/deleteCartItem/:productId/:userId", protect, deleteCartItem);
+
+router.get("/ShowCountOfItem/:userId", protect, ShowCountOfItem);
 
 module.exports = router;

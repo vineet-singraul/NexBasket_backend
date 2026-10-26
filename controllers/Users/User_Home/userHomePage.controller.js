@@ -480,17 +480,65 @@ const showCaryItemCount = async (req, res) => {
 
   try {
     const cartitemCount = await AddToCartModel.findOne({ productId }).length();
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "cart item found successfuly",
-        count: cartitemCount,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "cart item found successfuly",
+      count: cartitemCount,
+    });
   } catch (error) {
     return res
       .status(400)
       .json({ success: false, message: "some thing went wrong." });
+  }
+};
+
+// const ShowCountOfItem = async (req, res) => {
+//   const { userId } = req.params;
+//   if (!userId) {
+//     return res
+//       .status(400)
+//       .json({ success: true, message: "user not authenticate ." });
+//   }
+
+//   try {
+//     const count = (await AddToCartModel.find({ userId })).length();
+//     return res
+//       .status(200)
+//       .json({
+//         success: true,
+//         message: "fatch item count successfully",
+//         data: count,
+//       });
+//   } catch (error) {
+//     return res
+//       .status(400)
+//       .json({ success: false, message: "some thing went wrong." });
+//   }
+// };
+
+const ShowCountOfItem = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      message: "User not authenticated",
+    });
+  }
+
+  try {
+    const count = await AddToCartModel.countDocuments({ userId });
+
+    return res.status(200).json({
+      success: true,
+      message: "Fetched item count successfully",
+      count,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
   }
 };
 
@@ -506,4 +554,5 @@ module.exports = {
   showCartsDetails,
   deleteCartItem,
   showCaryItemCount,
+  ShowCountOfItem,
 };
