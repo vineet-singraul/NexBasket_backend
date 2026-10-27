@@ -4,9 +4,12 @@ dotenv.config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
+const http = require("http");
 
 const app = express();
+const server = http.createServer(app);
 const connectDB = require("./config/db.js");
+const { initSocket } = require("./config/socket.js");
 const authRoutes = require("./routes/auth.routes.js");
 const storeRoutes = require("./routes/store.routes.js");
 const electronicsRoutes = require("./routes/electranicsProduct.routes.js");
@@ -32,21 +35,24 @@ const allowedOrigins = [
 const vercelPreviewPattern =
   /^https:\/\/nex-basket-frontend-[a-z0-9]+-bigbasketnex-1301s-projects\.vercel\.app$/;
 
+const corsOrigin = (origin, callback) => {
+  if (
+    !origin ||
+    allowedOrigins.includes(origin) ||
+    vercelPreviewPattern.test(origin)
+  ) {
+    return callback(null, true);
+  }
+  callback(new Error("Not allowed by CORS"));
+};
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        vercelPreviewPattern.test(origin)
-      ) {
-        return callback(null, true);
-      }
-      callback(new Error("Not allowed by CORS"));
-    },
+    origin: corsOrigin,
     credentials: true,
   }),
 );
+initSocket(server, corsOrigin);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -79,7 +85,7 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectDB().catch((err) =>
     console.error("MongoDB connection error:", err.message),
   );

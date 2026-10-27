@@ -5,6 +5,7 @@ const categoryModel = require("../../../models/product_model/category/category.m
 const AddToWishListModel = require("../../../models/product_model/common/addToWishlist.model.js");
 const userModel = require("../../../models/auth_model/user.model.js");
 const AddToCartModel = require("../../../models/product_model/common/addToCart.model.js");
+const { emitCartCount } = require("../../../config/socket.js");
 
 const getUserHomePageDetails = async (req, res) => {
   try {
@@ -382,6 +383,8 @@ const AddToCart = async (req, res) => {
       quantity: Number(quantity) || 1,
     });
 
+    emitCartCount(userId);
+
     return res
       .status(200)
       .json({ success: true, message: "product added to cart", data: cart });
@@ -460,6 +463,9 @@ const deleteCartItem = async (req, res) => {
         .status(404)
         .json({ success: false, message: "item not found in cart." });
     }
+
+    emitCartCount(userId);
+
     return res
       .status(200)
       .json({ success: true, message: "item deleted from cart." });
