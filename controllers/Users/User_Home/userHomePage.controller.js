@@ -283,7 +283,9 @@ const ShowWishList = async (req, res) => {
   }
 
   try {
-    const wishlist = await AddToWishListModel.find({ userId });
+    const wishlist = await AddToWishListModel.find({ userId }).select(
+      "productId",
+    );
     if (wishlist.length === 0) {
       return res.status(200).json({
         success: true,
@@ -291,11 +293,29 @@ const ShowWishList = async (req, res) => {
         data: [],
       });
     }
+
+    const productIds = wishlist.map((item) => item.productId);
+
+    const [products, images] = await Promise.all([
+      productModel.find({ _id: { $in: productIds } }),
+      imageModel.find({ productId: { $in: productIds } }),
+    ]);
+
+    const list = products.map((product) => {
+      const productImages = images.filter(
+        (image) => String(image.productId) === String(product._id),
+      );
+      return {
+        ...product.toObject(),
+        images: productImages,
+      };
+    });
+
     return res.status(200).json({
       success: true,
       message: "product found successfully",
       count: wishlist.length,
-      data: wishlist,
+      data: list,
     });
   } catch (error) {
     console.error("ShowWishList error:", error);
@@ -562,3 +582,4 @@ module.exports = {
   showCaryItemCount,
   ShowCountOfItem,
 };
+  
