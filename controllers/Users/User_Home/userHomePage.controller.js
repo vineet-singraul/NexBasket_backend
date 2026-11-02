@@ -175,12 +175,20 @@ const searchProduct = async (req, res) => {
       .trim()
       .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+    const searchRegex = { $regex: escapedSearchKey, $options: "i" };
+
+    // Match on keywords, title, features, brand, tags or any specification
     const products = await productModel
       .find({
-        searchKeywords: {
-          $regex: escapedSearchKey,
-          $options: "i",
-        },
+        $or: [
+          { searchKeywords: searchRegex },
+          { title: searchRegex },
+          { features: searchRegex },
+          { brand: searchRegex },
+          { tags: searchRegex },
+          { "specifications.name": searchRegex },
+          { "specifications.value": searchRegex },
+        ],
       })
       .limit(8);
 

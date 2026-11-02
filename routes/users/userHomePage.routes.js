@@ -16,7 +16,7 @@ const { protect } = require("../../middlewares/auth.middleware.js");
 
 const router = express.Router();
 
-router.get("/getUserHomePageDetails", protect, getUserHomePageDetails);
+router.get("/getUserHomePageDetails", getUserHomePageDetails);
 
 router.get(
   "/getSingleProductDetails/:productId",
