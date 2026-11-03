@@ -10,7 +10,7 @@ const AdressSchema = new mongoose.Schema(
     logitude: String,
     AdressIs: {
       type: String,
-      enum: ["House", "Ofice", "othrt"],
+      enum: ["Home", "Work", "Other"],
       required: true,
     },
     fullAdress : {
@@ -28,4 +28,6 @@ const AdressSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = AdressSchema
+const Adresses = mongoose.model("Adresses", AdressSchema);
+
+module.exports = Adresses;

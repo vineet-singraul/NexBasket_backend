@@ -289,7 +289,7 @@ const checkCategortExiste = async (userWrittenCategory, existCategory) => {
   }
 };
 
-checkUserAdressesIsValid = async (
+const checkUserAdressesIsValid = async (
   lattitude,
   logitude,
   AdressIs,
@@ -297,7 +297,7 @@ checkUserAdressesIsValid = async (
   AdressConfirm,
   LandMark,
 ) => {
-    const prompt = `
+  const prompt = `
         You are an Advanced AI Address Intelligence,
         Address Correction and Delivery Location Analysis System.
 
@@ -475,11 +475,13 @@ checkUserAdressesIsValid = async (
   const response = await fetch("https://api.cohere.com/v2/chat", {
     method: "POST",
     headers: {
-      "Contect-Type": "application/json",
+      "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
     },
     body: JSON.stringify({
       model: "command-a-03-2025",
+      // Cohere ko force karo ki sirf valid JSON object hi return kare
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
@@ -510,7 +512,50 @@ checkUserAdressesIsValid = async (
     }),
   });
 
-  const data = await response.json();
+  // Response ko text mein read karo
+  const responseText = await response.text();
+
+
+  // Empty response check
+  if (!responseText) {
+    throw new Error("Cohere API returned an empty response");
+  }
+
+  // JSON parsing safely
+  let data;
+  try {
+    data = JSON.parse(responseText);
+  } catch (error) {
+    throw new Error("Cohere API returned invalid JSON");
+  }
+
+  // API error check (401, 429, 500 etc.)
+  if (!response.ok) {
+    throw new Error(
+      `Cohere API error (${response.status}): ${data.message || responseText}`,
+    );
+  }
+
+  const aiResponse = data?.message?.content?.[0]?.text;
+
+  if (!aiResponse) {
+    throw new Error("Cohere API response has no text content");
+  }
+
+  // AI kabhi kabhi JSON ke aage/peeche extra text ya ``` bhej deta hai, sirf {...} wala part nikalo
+  const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+  const cleanedResponse = jsonMatch ? jsonMatch[0] : aiResponse.trim();
+
+  let result;
+
+  try {
+    result = JSON.parse(cleanedResponse);
+  } catch (error) {
+    console.log("AI raw response:", aiResponse);
+    throw new Error("AI returned invalid JSON");
+  }
+
+  return result;
 };
 
 module.exports = { checkCategortExiste, checkUserAdressesIsValid };
