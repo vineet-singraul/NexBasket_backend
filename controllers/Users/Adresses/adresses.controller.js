@@ -47,4 +47,55 @@ const SaveUserAdress = async (req, res) => {
   }
 };
 
-module.exports = { SaveUserAdress };
+
+const gatAddressOfUser = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "user not authenticate" });
+  }
+
+  try {
+    const data = await AdressesModel.find({ userId });
+    return res.status(200).json({
+      success: true,
+      data: data,
+      message: "addresses find successfuly",
+    });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "some thing went wrong" });
+  }
+};
+
+const deleteAddress = async (req, res) => {
+  const { userId, _id } = req.params;
+
+  if (!userId || !_id) {
+    return res.status(400).json({
+      success: false,
+      message: "some issue faching to delete address",
+    });
+  }
+
+  try {
+    const result = await AdressesModel.deleteOne({ userId, _id });
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "address not found" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "product delete succesfull" });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "some thing went wrong ." });
+  }
+};
+
+module.exports = { SaveUserAdress, gatAddressOfUser, deleteAddress };
