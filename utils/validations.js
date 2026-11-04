@@ -1,7 +1,6 @@
-const checkCategortExiste = async (
-  userWrittenCategory,
-  existCategory,
-) => {
+const { model } = require("mongoose");
+
+const checkCategortExiste = async (userWrittenCategory, existCategory) => {
   const prompt = `
         You are an advanced e-commerce category validation engine.
 
@@ -290,4 +289,228 @@ const checkCategortExiste = async (
   }
 };
 
-module.exports = { checkCategortExiste };
+checkUserAdressesIsValid = async (
+  lattitude,
+  logitude,
+  AdressIs,
+  fullAdress,
+  AdressConfirm,
+  LandMark,
+) => {
+    const prompt = `
+        You are an Advanced AI Address Intelligence,
+        Address Correction and Delivery Location Analysis System.
+
+        Your task is to analyze the actual user-provided address
+        data and return the most accurate possible delivery address.
+
+        IMPORTANT:
+        You will receive six dynamically generated input fields
+        from the user. You MUST read and analyze ALL six fields
+        before generating your response.
+
+        DYNAMIC INPUT FIELDS:
+
+        1. lattitude
+        2. logitude
+        3. AdressIs
+        4. fullAdress
+        5. AdressConfirm
+        6. LandMark
+
+        HOW TO ANALYZE THE DATA:
+
+        STEP 1: READ ALL INPUTS
+
+        Read the actual values of:
+        - ${lattitude}
+        - ${logitude}
+        - ${AdressIs}
+        - ${fullAdress}
+        - ${AdressConfirm}
+        - ${LandMark}
+
+        Never assume that these fields contain fixed values.
+
+        STEP 2: UNDERSTAND THE LOCATION
+
+        Analyze latitude and longitude as geographical coordinates.
+
+        Understand the dynamically generated fullAdress
+        and identify its available address components.
+
+        Analyze AdressConfirm to identify:
+        - House number
+        - Flat number
+        - Floor number
+        - Building name
+        - Apartment name
+
+        Analyze LandMark to identify nearby landmarks.
+
+        STEP 3: ADDRESS ACCURACY
+
+        Compare all available address information.
+
+        Identify:
+        - Correct house or flat number
+        - Correct building name
+        - Correct floor
+        - Correct street or road
+        - Correct locality
+        - Correct city
+        - Correct state
+        - Correct PIN code
+        - Correct country
+        - Correct landmark
+
+        Correct spelling mistakes and formatting errors.
+
+        Remove unnecessary duplicate information.
+
+        Combine related address details only when they
+        clearly refer to the same location.
+
+        STEP 4: NUMERIC ADDRESS ANALYSIS
+
+        Sometimes the user may provide only numeric values
+        or incomplete address information.
+
+        Examples:
+        - House number only
+        - Flat number only
+        - Building number
+        - PIN code
+        - House number with locality
+
+        Understand the meaning of numeric values using
+        all available input fields.
+
+        Never confuse a house number with a PIN code.
+
+        Never invent missing address details.
+
+        If exact building or house-level information
+        is unavailable, preserve the available information
+        without claiming pinpoint accuracy.
+
+        STEP 5: DYNAMIC ADDRESS PRESERVATION
+
+        The incoming address is dynamically generated.
+
+        NEVER hardcode any city, state, country,
+        building, landmark, street or PIN code.
+
+        NEVER replace the user's actual address with
+        an example or assumed address.
+
+        Preserve genuine user-provided house, flat,
+        floor and building details.
+
+        Do not discard useful information.
+
+        STEP 6: LOCATION CONSISTENCY
+
+        Use latitude and longitude to understand
+        the geographical location.
+
+        If a reverse-geocoded address is provided,
+        compare it with the user-provided address.
+
+        If the information conflicts:
+        - Do not guess.
+        - Do not fabricate.
+        - Preserve reliable original information.
+        - Do not claim that the address is verified.
+
+        Coordinates alone cannot establish an exact
+        house or apartment address.
+
+        STEP 7: FINAL OUTPUT
+
+        Return exactly these three fields:
+
+        1. fullAdress:
+        The most complete and properly formatted
+        delivery address using all reliable information.
+
+        2. AdressConfirm:
+        The corrected house, flat, floor or building
+        address while preserving original details.
+
+        3. LandMark:
+        The corrected landmark provided by the user.
+
+        If a field has no reliable information,
+        return an empty string.
+
+        STRICT OUTPUT FORMAT:
+
+        Return ONLY valid JSON.
+
+        {
+          "fullAdress": "",
+          "AdressConfirm": "",
+          "LandMark": ""
+        }
+
+        FINAL RULES:
+
+        - Read all six dynamically passed input fields.
+        - Analyze all fields together.
+        - Never assume fixed address values.
+        - Never invent an address.
+        - Never invent a house number or landmark.
+        - Never change the actual meaning of the address.
+        - Return only the three requested JSON fields.
+        - No explanations.
+        - No markdown.
+        - No additional properties.
+
+        Your highest priority is accurate delivery address
+        normalization, location consistency and preservation
+        of the user's original address information.
+       `;
+
+  const response = await fetch("https://api.cohere.com/v2/chat", {
+    method: "POST",
+    headers: {
+      "Contect-Type": "application/json",
+      Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "command-a-03-2025",
+      messages: [
+        {
+          role: "system",
+          content: prompt,
+        },
+        {
+          role: "user",
+          content: `
+    Analyze the following actual dynamic user data:
+
+    ${JSON.stringify(
+      {
+        lattitude,
+        logitude,
+        AdressIs,
+        fullAdress,
+        AdressConfirm,
+        LandMark,
+      },
+      null,
+      2,
+    )}
+
+    Read all six fields and return the required JSON.
+  `,
+        },
+      ],
+    }),
+  });
+
+  const data = await response.json();
+};
+
+module.exports = { checkCategortExiste, checkUserAdressesIsValid };

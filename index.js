@@ -23,6 +23,7 @@ const productFilters = require("./routes/users/filter.routes.js");
 const userHomePage = require("./routes/users/userHomePage.routes.js");
 const UserShowCategory = require("./routes/users/userCategoryPage.routes.js");
 const getParticulerFillter = require("./routes/users/getParticulerFillter.routes.js");
+const adresses = require("./routes/users/adressofUser.routes.js");
 
 const AdminFillter = require("./routes/Admin/fillter.routes.js");
 
@@ -69,6 +70,7 @@ app.use("/api/userHomePage", userHomePage);
 app.use("/api/UserShowCategory", UserShowCategory);
 app.use("/api/getParticulerFillter", getParticulerFillter);
 app.use("/api/productFilters", productFilters);
+app.use("/api/adresses", adresses);
 
 app.use("/api/AdminFillter", AdminFillter);
 
