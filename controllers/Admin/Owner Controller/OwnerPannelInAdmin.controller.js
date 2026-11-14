@@ -136,6 +136,4 @@ const OwnerDeleteWithProductsAndStore = async (req, res) => {
   }
 };
 
-module.exports = { OwnerDeleteWithProductsAndStore };
-
 module.exports = { OwnerDetails, OwnerDeleteWithProductsAndStore };
