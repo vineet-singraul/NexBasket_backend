@@ -27,6 +27,7 @@ const adresses = require("./routes/users/adressofUser.routes.js");
 
 const AdminFillter = require("./routes/Admin/fillter.routes.js");
 const AdminPannalInOwnerDetails = require("./routes/Admin/OwnerPannalForAdmin.routes.js");
+const AdminPannalInUsersDetails = require("./routes/Admin/UserPannalForAdmin.routes.js");
 
 const PORT = process.env.PORT || 8000;
 
@@ -75,6 +76,7 @@ app.use("/api/adresses", adresses);
 
 app.use("/api/AdminFillter", AdminFillter);
 app.use("/api/AdminPannalInOwnerDetails", AdminPannalInOwnerDetails);
+app.use("/api/AdminPannalInUsersDetails", AdminPannalInUsersDetails);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
