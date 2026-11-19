@@ -2,6 +2,7 @@ const UserModel = require("../../../models/auth_model/user.model.js");
 const UserWishListModel = require("../../../models/product_model/common/addToWishlist.model.js");
 const productBaseModel = require("../../../models/product_model/common/productBase.model.js");
 const ProductIamgeModel = require("../../../models/product_model/common/productImage.model.js");
+const AddressModel = require("../../../models/product_model/common/adresses.model.js");
 
 const getAllUserForAdmin = async (req, res) => {
   try {
@@ -88,4 +89,30 @@ const getUserDetailsForAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getAllUserForAdmin, getUserDetailsForAdmin };
+const getUserAllAddressForAdmin = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    return res.status(404).json({ success: false, message: "user not found." });
+  }
+
+  try {
+    // 1 Get User Details deom DB :
+    console.time("addressQuery");
+    const userAddress = await AddressModel.find({ userId: userId })
+      .select("AdressIs fullAdress LandMark")
+      .lean();
+    console.timeEnd("addressQuery");
+    return res.status(200).json({ succes: true, address: userAddress });
+  } catch (error) {
+    return res.status(500).json({
+      succes: false,
+      message: "some thing went wrong to find adde=ress . ",
+    });
+  }
+};
+
+module.exports = {
+  getAllUserForAdmin,
+  getUserDetailsForAdmin,
+  getUserAllAddressForAdmin,
+};
